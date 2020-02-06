@@ -18,11 +18,9 @@ La moltiplicazione tra una matrice A di dimensioni *m x n* e una matrice B di di
 
 ## Soluzione
 
-Il programma C esposto nel file *[matrixMultiplication.c](src/MatrixMultiplication.c)* fornisce una soluzione al problema della **moltiplicazione tra due matrici** quadrate di dimensioni *N x N*.
+Il programma C esposto nel file *[MatrixMultiplication.c](src/MatrixMultiplication.c)* fornisce una soluzione al problema della **moltiplicazione tra due matrici** quadrate di dimensioni *N x N*.
 
-Tale soluzione si serve del **calcolo parallelo**, suddividendo il carico di lavoro su più processori utilizzando delle operazioni di comunicazione collettiva fornite da **MPI**, come le funzioni di `broadcast`, `scatter` e `gather`.
-
-Il calcolo del prodotto avviene assumendo che le dimensioni delle matrici siano divisibili per il numero di processori coinvolti nell'operazione, così da poter garantire l'assegnamento dello stesso carico di lavoro a ciascun processore.
+Tale soluzione si serve del **calcolo parallelo**, suddividendo il carico di lavoro su più processori utilizzando delle operazioni di comunicazione collettiva fornite da **MPI**, come le funzioni di `broadcast`, `scatter` e `gather`. Il calcolo del prodotto avviene assumendo che le dimensioni delle matrici siano divisibili per il numero di processori coinvolti nell'operazione, così da poter garantire l'assegnamento dello stesso carico di lavoro a ciascun processore.
 
 In particolare, la soluzione prevede che ogni processore abbia il compito di calcolare una porzione della matrice risultante C. Per fare questo, il processore master, dopo aver inizializzato le due matrici da moltiplicare, invierà ad ogni altro processore un sottoinsieme della matrice A e l'intera matrice B.
 
@@ -51,7 +49,7 @@ int rank;
 MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 ```
 
-Successivamente, si passa a recuperare la **dimensione delle matrici** e a verificare che essa sia divisibile per il numero di processori. Oltre a questo, si procede a determinare anche il numero di righe della matrice A che, in seguito, saranno assegnate a ciascun processore. Tale valore si ottiene semplicemente dividendo la dimensione delle matrici per il numero di processori.
+Successivamente, si passa a recuperare la **dimensione delle matrici** e a verificare che essa sia **divisibile** per il numero di processori. Oltre a questo, si procede a determinare anche il numero di righe della matrice A che, in seguito, saranno assegnate a ciascun processore. Tale valore si ottiene semplicemente dividendo la dimensione delle matrici per il numero di processori.
 
 ```c
 // Dimensions
@@ -67,7 +65,7 @@ if (size % world_size != 0) {
 }
 ```
 
-Dopodiché, il programma si occupa di **allocare la memoria necessaria** da destinare alle matrici.
+Dopodiché, il programma si occupa di **allocare la memoria** necessaria da destinare alle matrici.
 
 ```c
 // Matrices allocation
@@ -174,13 +172,11 @@ L'algoritmo seguente calcola la moltiplicazione tra il sottoinsieme della matric
 
 ```c
 // Algorithm for matrix multiplication
-int c = 0;
 for (int i = rank * s; i < (rank + 1) * s; i++) {
     for (int j = 0; j < size; j++) {
         matrixC[i][j] = 0;
         for (int k = 0; k < size; k++) {
             matrixC[i][j] = matrixC[i][j] + matrixA[i][k] * matrixB[k][j];
-            c++;
         }
     }
 }
