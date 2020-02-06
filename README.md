@@ -4,11 +4,11 @@
 
 ### Università degli Studi di Salerno - Anno Accademico 2019/20
 
-##### Prof. Vittorio Scarano
+#### Prof. Vittorio Scarano
 
-##### Dott. Carmine Spagnuolo
+#### Dott. Carmine Spagnuolo
 
-##### Roberto Gagliardi 0522500543
+#### Roberto Gagliardi 0522500543
 
 ## Problema
 
@@ -18,9 +18,9 @@ La moltiplicazione tra una matrice A di dimensioni *m x n* e una matrice B di di
 
 ## Soluzione
 
-Il programma C esposto nel file *[matrixMultiplication.c](src/matrixMultiplication.c)* fornisce una soluzione al problema della moltiplicazione tra due matrici quadrate di dimensioni *N x N*.
+Il programma C esposto nel file *[matrixMultiplication.c](src/MatrixMultiplication.c)* fornisce una soluzione al problema della **moltiplicazione tra due matrici** quadrate di dimensioni *N x N*.
 
-Tale soluzione si serve del calcolo parallelo, suddividendo il carico di lavoro su più processori utilizzando delle operazioni di comunicazione collettiva fornite da MPI, come le funzioni di `broadcast`, `scatter` e `gather`.
+Tale soluzione si serve del **calcolo parallelo**, suddividendo il carico di lavoro su più processori utilizzando delle operazioni di comunicazione collettiva fornite da **MPI**, come le funzioni di `broadcast`, `scatter` e `gather`.
 
 Il calcolo del prodotto avviene assumendo che le dimensioni delle matrici siano divisibili per il numero di processori coinvolti nell'operazione, così da poter garantire l'assegnamento dello stesso carico di lavoro a ciascun processore.
 
@@ -36,7 +36,7 @@ Nel caso in cui le matrici fornite non siano quadrate o che le loro dimensioni n
 
 ### Inizializzazione
 
-La prima parte della soluzione prevede tutte le opportune inizializzazioni dell'ambiente MPI, così da recuperare il numero di processori e il rango di quello corrente.
+La prima parte della soluzione prevede tutte le opportune inizializzazioni dell'**ambiente MPI**, così da recuperare il numero di processori e il rango di quello corrente.
 
 ```c
 // Initialize MPI environment
@@ -51,7 +51,7 @@ int rank;
 MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 ```
 
-Successivamente, si passa a recuperare la dimensione delle matrici e a verificare che essa sia divisibile per il numero di processori. Oltre a questo, si procede a determinare anche il numero di righe della matrice A che, in seguito, saranno assegnate a ciascun processore. Tale valore si ottiene semplicemente dividendo la dimensione delle matrici per il numero di processori.
+Successivamente, si passa a recuperare la **dimensione delle matrici** e a verificare che essa sia divisibile per il numero di processori. Oltre a questo, si procede a determinare anche il numero di righe della matrice A che, in seguito, saranno assegnate a ciascun processore. Tale valore si ottiene semplicemente dividendo la dimensione delle matrici per il numero di processori.
 
 ```c
 // Dimensions
@@ -67,7 +67,7 @@ if (size % world_size != 0) {
 }
 ```
 
-Dopodiché, il programma si occupa di allocare la memoria necessaria da destinare alle matrici.
+Dopodiché, il programma si occupa di **allocare la memoria necessaria** da destinare alle matrici.
 
 ```c
 // Matrices allocation
@@ -80,7 +80,7 @@ matrixC = (int **) malloc(size * sizeof(int *));
 allocMatrix(matrixC, size, size);
 ```
 
-La procedura seguente fa in modo che le matrici vengano allocate come un array di puntatori a blocchi contigui di memoria, riga per riga.
+La procedura seguente fa in modo che le matrici vengano allocate come un array di puntatori a **blocchi contigui di memoria**, riga per riga.
 
 ```c
 // Allocation of matrix as an array of successive elements
@@ -91,7 +91,7 @@ void allocMatrix(int **matrix, int rows, int columns) {
 }
 ```
 
-Una volta allocata la memoria in maniera opportuna, il processore master (di rango 0) può inizializzare i valori delle matrici.
+Una volta allocata la memoria in maniera opportuna, il processore master (di rango 0) può **inizializzare** i valori delle matrici.
 
 ```c
 // Master processor
@@ -123,7 +123,7 @@ void printMatrix(int **matrix, int rows, int columns, char *name) {
 	printf("%s:\n", name);
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < columns; j++) {
-			printf("%d, ", matrix[i][j]);
+            printf("%d, ", matrix[i][j]);
 		}
 		printf("\n");
 	}
@@ -132,11 +132,11 @@ void printMatrix(int **matrix, int rows, int columns, char *name) {
 
 ### Calcolo della soluzione
 
-A questo punto, il programma procede al calcolo della moltiplicazione tra le due matrici.
+A questo punto, il programma procede al **calcolo della moltiplicazion**e tra le due matrici.
 
-##### Invio della prima matrice
+#### Invio della prima matrice
 
-La prima cosa da fare è inviare a tutti i processori una porzione della matrice A. Per fare questo, la funzione di `scatter` mostrata di seguito fa in modo che il processore di rango 0, ovvero il master, invii a tutti gli altri processori un sottoinsieme delle righe della matrice A.
+La prima cosa da fare è inviare a tutti i processori una *porzione* della matrice A. Per fare questo, la funzione di `scatter` mostrata di seguito fa in modo che il processore di rango 0, ovvero il master, invii a tutti gli altri processori un sottoinsieme delle righe della matrice A.
 
 ```c
 // Send subset of first matrix to each other processor
@@ -159,16 +159,16 @@ la porzione della matrice da inviare viene determinata da:
 
 In questo modo, si garantisce che a ogni processore venga inviato lo stesso numero di righe `s` e tutte le colonne della matrice A, così come stabilito dalla soluzione.
 
-##### Invio della seconda matrice
+#### Invio della seconda matrice
 
-La funzione di `broadcast` seguente, invece, fa in modo che il master invii a tutti gli altri processori la matrice B. In questo caso, la matrice viene inviata per intero, così da permettere a tutti di calcolare la propria parte della soluzione.
+La funzione di `broadcast` seguente, invece, fa in modo che il master invii a tutti gli altri processori la matrice B. In questo caso, la matrice viene inviata *per intero*, così da permettere a tutti di calcolare la propria parte della soluzione.
 
 ```c
 // Send second matrix to each other processor
 MPI_Bcast(matrixB[0], size * size, MPI_INT, 0, MPI_COMM_WORLD);
 ```
 
-##### Moltiplicazione delle matrici
+#### Moltiplicazione delle matrici
 
 L'algoritmo seguente calcola la moltiplicazione tra il sottoinsieme della matrice A e la matrice B. Il risultato di questa operazione viene memorizzato nella matrice C.
 
@@ -190,14 +190,13 @@ Da notare come anche il processore master, il cui rango è pari a 0, proceda a c
 
 ![image](img/Matrix_result.png)
 
-##### Invio della soluzione
+#### Invio della soluzione
 
 A questo punto, ogni processore è pronto ad inviare la propria parte del risultato al processore master. Per fare questo, la seguente funzione di `gather` raccoglie nella matrice C del master tutte le porzioni calcolate da ogni altro processore.
 
 ```c
 // Receive result matrix by each other processor
-MPI_Gather(matrixC[rank * s], s * size, MPI_INT, matrixC[rank * s], s * size, MPI_INT,
-            0, MPI_COMM_WORLD);
+MPI_Gather(matrixC[rank * s], s * size, MPI_INT, matrixC[rank * s], s * size, MPI_INT, 0, MPI_COMM_WORLD);
 ```
 
 ### Finalizzazione
