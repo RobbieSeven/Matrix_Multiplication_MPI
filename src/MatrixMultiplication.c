@@ -33,12 +33,12 @@ int main(int argc, char* argv[]) {
 	  int name_len;
 	  MPI_Get_processor_name(processor_name, &name_len);
 
-	  // Hello world message
-	  printf("Hello world from processor %s, rank %d out of %d processors\n", processor_name, rank, world_size);
+	  // Hello message
+	  printf("Hello from processor %s, rank %d out of %d processors\n", processor_name, rank, world_size);
 
 	  // Dimensions
-	  int size = atoi(argv[1]);		// Size of both rows and columns of matrices
-	  int s = size / world_size;	// Subset of rows and columns per processor
+	  int size = atoi(argv[1]);			// Size of both rows and columns of matrices
+	  int s = size / world_size;		// Subset of rows and columns per processor
 
 	  // Check size of matrices
 	  if (size % world_size != 0) {
@@ -78,13 +78,11 @@ int main(int argc, char* argv[]) {
 	  MPI_Bcast(matrixB[0], size * size, MPI_INT, 0, MPI_COMM_WORLD);
 
 	  // Algorithm for matrix multiplication
-	  int ops = 0;								// Number of operations done
 	  for (int i = rank * s; i < (rank + 1) * s; i++) {
 		  for (int j = 0; j < size; j++) {
 			  matrixC[i][j] = 0;
 			  for (int k = 0; k < size; k++) {
 				  matrixC[i][j] = matrixC[i][j] + matrixA[i][k] * matrixB[k][j];
-				  ops++;						// Increment number of operations
 			  }
 		  }
 	  }
@@ -101,6 +99,9 @@ int main(int argc, char* argv[]) {
 		  // Print result matrix
 		  printMatrix(matrixC, size, size, "Result matrix");
 
+		  // Print time spent
+		  printf("The operation took %f seconds\n", endTime - startTime);
+
 	  }
 
 	  // Free allocated memory
@@ -109,7 +110,6 @@ int main(int argc, char* argv[]) {
 	  free(matrixC);
 
 	  // Finalize the MPI environment
-	  printf("Processor %d has done %d operations in %f seconds\n", rank, ops, (endTime - startTime) * 1000);
 	  MPI_Finalize();
 	  return 0;
 
@@ -122,7 +122,7 @@ void allocMatrix(int **matrix, int rows, int columns) {
 		matrix[i] = &elements[i * columns];
 }
 
-// Initialize matrix with successive values between one and 'mod'
+// Initialize matrix with successive values between 1 and 'mod'
 void initMatrix(int **matrix, int size, int mod) {
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
@@ -131,7 +131,7 @@ void initMatrix(int **matrix, int size, int mod) {
 	}
 }
 
-// Print matrix with the specified name, where 'size' is the number of rows and columns
+// Print matrix with the specified name, rows and columns
 void printMatrix(int **matrix, int rows, int columns, char *name) {
 	printf("%s:\n", name);
 	for (int i = 0; i < rows; i++) {
@@ -141,4 +141,3 @@ void printMatrix(int **matrix, int rows, int columns, char *name) {
 		printf("\n");
 	}
 }
-

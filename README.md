@@ -218,3 +218,7 @@ printf("Processor %d has done %d operations\n", rank, c);
 MPI_Finalize();
 return 0;
 ```
+
+## Benchmark
+
+La soluzione proposta viene valutata sulla base della scalabilità del programma rispetto alla capacità di calcolo impiegata e alle risorse parallele utilizzate.
