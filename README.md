@@ -18,7 +18,7 @@ La moltiplicazione tra una matrice A di dimensioni *m x n* e una matrice B di di
 
 ## Soluzione
 
-Il programma C esposto nel file *[MatrixMultiplication.c](src/MatrixMultiplication.c)* fornisce una soluzione al problema della **moltiplicazione tra due matrici** quadrate di dimensioni *N x N*.
+Il programma C esposto nel file [MatrixMultiplication.c](src/MatrixMultiplication.c) fornisce una soluzione al problema della **moltiplicazione tra due matrici** quadrate di dimensioni *N x N*.
 
 Tale soluzione si serve del **calcolo parallelo**, suddividendo il carico di lavoro su più processori utilizzando delle operazioni di comunicazione collettiva fornite da **MPI**, come le funzioni di `broadcast`, `scatter` e `gather`. Il calcolo del prodotto avviene assumendo che le dimensioni delle matrici siano divisibili per il numero di processori coinvolti nell'operazione, così da poter garantire l'assegnamento dello stesso carico di lavoro a ciascun processore.
 
@@ -221,4 +221,60 @@ return 0;
 
 ## Benchmark
 
-La soluzione proposta viene valutata sulla base della scalabilità del programma rispetto alla capacità di calcolo impiegata e alle risorse parallele utilizzate.
+La soluzione proposta viene valutata sulla base della **scalabilità** del programma rispetto alla capacità di calcolo impiegata e alle risorse parallele utilizzate.
+
+Il testing è avvenuto sulla base dell'esecuzione del programma su un cluster di 8 macchine fornite da **Amazon Web Services**. In particolare, il processo di esecuzione ha previsto:
+
+- L'inizializzazione di un cluster di 8 istanze *ec2 ami-52a0c53b* di tipo *m4.large* costituito da un nodo master e da 7 nodi slave, tramite la procedura fornita da [AWS Cluster Toolkit](https://github.com/spagnuolocarmine/aws-cluster-toolkit).
+
+- Il trasferimento del codice sorgente dalla macchina locale all'istanza controller e da quest'ultima a tutte le istanze slave.
+
+- L'esecuzione del programma sull'istanza controller con varie configurazioni, composte da un numero variabile di processori e da una dimensione variabile delle matrici, data dalle istruzioni seguenti.
+
+```c
+mpicc -std=c99 MatrixMultiplication.c -o MatrixMultiplication
+mpirun -np NUM_PROCESSORI --host IP_MASTER,IP_SLAVE1,IP_SLAVE2,...,IP_SLAVE7 MatrixMultiplication
+```
+
+Il tempo di esecuzione del programma viene ottenuto grazie all'utilizzo della funzione ```c MPI_Wtime ```, così come illustrato di seguito.
+
+```c
+// Time of start processing
+double startTime = MPI_Wtime();
+
+// Send subset of first matrix to each other processor
+MPI_Scatter(matrixA[rank * s], s * size, MPI_INT, matrixA[rank * s], s * size, MPI_INT, 0, MPI_COMM_WORLD);
+```
+
+```c
+// Receive result matrix by each other processor
+MPI_Gather(matrixC[rank * s], s * size, MPI_INT, matrixC[rank * s], s * size, MPI_INT, 0, MPI_COMM_WORLD);
+
+// Time of end processing
+double endTime = MPI_Wtime();
+```
+
+```c
+// Print time spent
+printf("The operation took %f seconds\n", endTime - startTime);
+```
+
+In particolare, il **tempo di esecuzione** del programma viene considerato come la differenza tra:
+
+- Il tempo di inizio, calcolato subito prima che il processore master invii le matrici agli altri processori.
+
+- Il tempo di fine, calcolato subito dopo che il processore master abbia ricevuto la matrice risultante dagli altri processori.
+
+Per raccogliere dei risultati più affidabili, il programma è stato lanciato tre volte per ciascuna configurazione, per poi calcolare la media dei tre tempi di esecuzione rilevati.
+
+### Scalabilità
+
+La **scalabilità forte** di un programma è la sua capacità a gestire uno stesso carico di lavoro su un numero variabile di processori. Per testare il programma in esame, l'input stabilito consiste in una coppia di matrici di dimensione pari a 1680 * 1680. Questo valore garantisce che la dimensione delle matrici risulti sempre divisibile per il numero di processori in esecuzione. I risultati del test vengono illustrati di seguito.
+
+![image](img/Strong_scal.png)
+
+La **scalabilità debole** di un programma, invece, è la sua capacità di gestire una certa quantità di lavoro in maniera proporzionale al numero di processori in esecuzione in parallelo. In questo caso, le dimensioni scelte per le matrici da moltiplicare è dato da 210 * num_processori; in questo modo, tali dimensioni crescono in funzione del numero di processori in esecuzione che, come prima, spazia in un intervallo che va da 2 a 16. Il risultato di quest'analisi viene descritto dal diagramma seguente.
+
+![image](img/Weak_scal.png)
+
+Entrambi i diagrammi mostrano come un numero di processori superiore a 8 comporta un aumento significativo del tempo di esecuzione e, di conseguenza, un calo delle prestazioni del programma.
