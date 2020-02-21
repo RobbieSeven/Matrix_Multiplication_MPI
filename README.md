@@ -8,7 +8,7 @@
 
 #### Dott. Carmine Spagnuolo
 
-#### Roberto Gagliardi 0522500543
+#### Roberto Gagliardi - matr. 0522500543
 
 ## Problema
 
@@ -267,7 +267,7 @@ Per raccogliere dei risultati più affidabili, il programma è stato lanciato tr
 
 ### Scalabilità
 
-La **scalabilità forte** di un programma è la sua capacità di gestire uno stesso carico di lavoro su un numero variabile di processori. Per testare il programma in esame, l'input stabilito consiste in una coppia di matrici di dimensione pari a *1680 x 1680*. Questo valore garantisce che la dimensione delle matrici risulti sempre divisibile per il numero di processori in esecuzione. I risultati del test vengono illustrati di seguito.
+La **scalabilità forte** di un programma è la sua capacità di gestire uno stesso carico di lavoro su un numero variabile di processori. Per testare il programma in esame, l'input stabilito consiste in una coppia di matrici di dimensione pari a *1680 x 1680*. Questo valore garantisce che la dimensione delle matrici risulti sempre divisibile per il numero di processori in esecuzione. I risultati del test vengono illustrati nel diagramma seguente, dove il tempo di esecuzione viene espresso in secondi.
 
 ![image](img/Strong_scal.png)
 
