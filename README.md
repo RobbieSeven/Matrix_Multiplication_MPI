@@ -2,7 +2,7 @@
 
 ### Corso di Programmazione Concorrente, Parallela e su Cloud
 
-### Università degli Studi di Salerno - Anno Accademico 2019/20
+### Università degli Studi di Salerno - Anno Accademico 2017/18
 
 #### Prof. Vittorio Scarano
 
@@ -12,7 +12,7 @@
 
 ## Problema
 
-La moltiplicazione tra una matrice A di dimensioni *m x n* e una matrice B di dimensioni *n x l* risulta in un una matrice C di dimensioni *m x l*, così come viene raffigurato di seguito.
+La moltiplicazione tra una matrice A di dimensioni *M x N* e una matrice B di dimensioni *N x L* risulta in un una matrice C di dimensioni *M x L*, così come viene raffigurato di seguito.
 
 ![image](img/Matrix_multiplication.png)
 
@@ -236,7 +236,7 @@ mpicc -std=c99 MatrixMultiplication.c -o MatrixMultiplication
 mpirun -np NUM_PROCESSORI --host IP_MASTER,IP_SLAVE1,IP_SLAVE2,...,IP_SLAVE7 MatrixMultiplication
 ```
 
-Il **tempo di esecuzione** del programma viene ottenuto grazie all'utilizzo della funzione ``` MPI_Wtime ```, così come illustrato di seguito. In particolare, il tempo di esecuzione del programma viene considerato come la differenza tra:
+Il **tempo di esecuzione** del programma viene ottenuto grazie all'utilizzo della funzione ` MPI_Wtime `, così come illustrato di seguito. In particolare, il tempo di esecuzione del programma viene considerato come la differenza tra:
 
 - Il tempo di inizio, calcolato subito prima che il processore master invii le matrici agli altri processori.
 
@@ -267,11 +267,11 @@ Per raccogliere dei risultati più affidabili, il programma è stato lanciato tr
 
 ### Scalabilità
 
-La **scalabilità forte** di un programma è la sua capacità di gestire uno stesso carico di lavoro su un numero variabile di processori. Per testare il programma in esame, l'input stabilito consiste in una coppia di matrici di dimensione pari a *1680 * 1680*. Questo valore garantisce che la dimensione delle matrici risulti sempre divisibile per il numero di processori in esecuzione. I risultati del test vengono illustrati di seguito.
+La **scalabilità forte** di un programma è la sua capacità di gestire uno stesso carico di lavoro su un numero variabile di processori. Per testare il programma in esame, l'input stabilito consiste in una coppia di matrici di dimensione pari a *1680 x 1680*. Questo valore garantisce che la dimensione delle matrici risulti sempre divisibile per il numero di processori in esecuzione. I risultati del test vengono illustrati di seguito.
 
 ![image](img/Strong_scal.png)
 
-La **scalabilità debole** di un programma, invece, è la sua capacità di gestire una certa quantità di lavoro in maniera proporzionale al numero di processori in esecuzione in parallelo. In questo caso, le dimensioni scelte per le matrici da moltiplicare è dato da ```210 * num_processori```; in questo modo, tali dimensioni crescono in funzione del numero di processori in esecuzione che, come prima, spazia in un intervallo che va da 2 a 16. Il risultato di quest'analisi viene descritto dal diagramma seguente.
+La **scalabilità debole** di un programma, invece, è la sua capacità di gestire una certa quantità di lavoro in maniera proporzionale al numero di processori in esecuzione in parallelo. In questo caso, le dimensioni scelte per le matrici da moltiplicare è dato da `210 x num_processori`; in questo modo, tali dimensioni crescono in funzione del numero di processori in esecuzione che, come prima, spazia in un intervallo che va da 2 a 16. Il risultato di quest'analisi viene descritto dal diagramma seguente.
 
 ![image](img/Weak_scal.png)
 
