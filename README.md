@@ -267,7 +267,7 @@ Per raccogliere dei risultati più affidabili, il programma è stato lanciato tr
 
 ### Risultati
 
-La **scalabilità forte** di un programma è la sua capacità di gestire uno stesso carico di lavoro su un numero variabile di processori. Per testare il programma in esame, l'input stabilito consiste in una coppia di matrici di dimensione pari a *1680 x 1680*. Questo valore non è altro che il minimo comune multiplo dell'insieme {2, 4, 6, 8, 10, 12, 14, 16}, i cui valori rappresentano il numero di processori utilizzati per ogni singolo test. In questo modo si garantisce che la dimensione delle matrici risulti sempre divisibile per il numero di processori in esecuzione. I risultati del test vengono illustrati nel diagramma seguente, dove il tempo di esecuzione viene espresso in secondi.
+La **scalabilità forte** di un programma è la sua capacità di gestire uno stesso carico di lavoro su un numero variabile di processori. Per testare il programma in esame, l'input stabilito consiste in una coppia di matrici di dimensione pari a *1680 x 1680*. Questo valore non è altro che il minimo comune multiplo dell'insieme `{2, 4, 6, 8, 10, 12, 14, 16}`, i cui valori rappresentano il numero di processori utilizzati per ogni singolo test. In questo modo si garantisce che la dimensione delle matrici risulti sempre divisibile per il numero di processori in esecuzione. I risultati del test vengono illustrati nel diagramma seguente, dove il tempo di esecuzione viene espresso in secondi.
 
 ![image](img/Strong_scal.png)
 
