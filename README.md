@@ -265,14 +265,16 @@ printf("The operation took %f seconds\n", endTime - startTime);
 
 Per raccogliere dei risultati più affidabili, il programma è stato lanciato tre volte per ciascuna configurazione, per poi calcolare la media dei tre tempi di esecuzione rilevati.
 
-### Scalabilità
+### Risultati
 
-La **scalabilità forte** di un programma è la sua capacità di gestire uno stesso carico di lavoro su un numero variabile di processori. Per testare il programma in esame, l'input stabilito consiste in una coppia di matrici di dimensione pari a *1680 x 1680*. Questo valore garantisce che la dimensione delle matrici risulti sempre divisibile per il numero di processori in esecuzione. I risultati del test vengono illustrati nel diagramma seguente, dove il tempo di esecuzione viene espresso in secondi.
+La **scalabilità forte** di un programma è la sua capacità di gestire uno stesso carico di lavoro su un numero variabile di processori. Per testare il programma in esame, l'input stabilito consiste in una coppia di matrici di dimensione pari a *1680 x 1680*. Questo valore non è altro che il minimo comune multiplo dell'insieme {2, 4, 6, 8, 10, 12, 14, 16}, i cui valori rappresentano il numero di processori utilizzati per ogni singolo test. In questo modo si garantisce che la dimensione delle matrici risulti sempre divisibile per il numero di processori in esecuzione. I risultati del test vengono illustrati nel diagramma seguente, dove il tempo di esecuzione viene espresso in secondi.
 
 ![image](img/Strong_scal.png)
 
-La **scalabilità debole** di un programma, invece, è la sua capacità di gestire una certa quantità di lavoro in maniera proporzionale al numero di processori in esecuzione in parallelo. In questo caso, le dimensioni scelte per le matrici da moltiplicare è dato da `210 x num_processori`; in questo modo, tali dimensioni crescono in funzione del numero di processori in esecuzione che, come prima, spazia in un intervallo che va da 2 a 16. Il risultato di quest'analisi viene descritto dal diagramma seguente.
+Questo diagramma mostra come un numero di processori superiore a 8 comporti un aumento significativo del tempo di esecuzione e, di conseguenza, conduca ad un calo delle prestazioni del programma. Da notare, ad esempio, come la suddivisione del carico di lavoro su 10 processori comporti un tempo di esecuzione più elevato rispetto all'utilizzo di soli 4 processori paralleli. Questo potrebbe essere dovuto al fatto che un numero troppo elevato di processori comporti un tempo di gestione e di comunicazione tra gli stessi troppo alto rispetto al tempo effettivamente speso nel calcolo della soluzione.
+
+La **scalabilità debole** di un programma, invece, è la sua capacità di gestire una certa quantità di lavoro in maniera proporzionale al numero di processori utilizzati in parallelo. In questo caso, le dimensioni scelte per le matrici da moltiplicare è dato da `210 x num_processori`; tali dimensioni crescono in funzione del numero di processori in esecuzione che, come prima, spazia in un intervallo che va da 2 a 16. Il risultato di quest'analisi viene mostrato dal diagramma seguente.
 
 ![image](img/Weak_scal.png)
 
-Entrambi i diagrammi mostrano come un numero di processori superiore a 8 comporti un aumento significativo del tempo di esecuzione e, di conseguenza, un calo delle prestazioni del programma.
+Tale diagramma mostra un aumento del tempo di esecuzione nel caso in cui il carico di lavoro aumenti in maniera proporzionale al numero di processori utilizzati. Tale aumento avviene in modo contenuto nel caso di un numero di processori pari o inferiore a 8. Al contrario, al di sopra di questo valore, l'aumento dei tempi di esecuzione risulta essere molto più significativo. Da questi risultati, ancora una volta, si può evincere che un numero troppo elevato di processori in esecuzione in parallelo possa influenzare negativamente le prestazioni del programma.
